@@ -1,216 +1,290 @@
-# Informe de Ejecución de Pruebas
+# Informe de Ejecución de Pruebas – API de Productos y Categorías
 
 ## 1. Información general
 
-| Campo                  | Valor                         |
-| ---------------------- | ----------------------------- |
-| Proyecto               | API de Productos y Categorías |
-| Responsable            | Julian Quiroga                |
-| Ambiente               | Entorno local                 |
-| Framework              | FastAPI                       |
-| Herramienta de pruebas | pytest                        |
-| Cliente de pruebas     | FastAPI TestClient            |
-| Fecha                  | 17/09/2026                    |
+**Proyecto:** API REST de Productos y Categorías
+**Versión evaluada:** 1.0.0
+**Fecha de ejecución:** Septiembre de 2026
+**Sistema operativo:** Windows
+**Python:** 3.14.6
+**FastAPI:** 0.141.1
+**Starlette:** 1.6.0
+**pytest:** 9.1.1
+**Cliente HTTP:** FastAPI TestClient
 
 ---
 
 ## 2. Objetivo
 
-Presentar los resultados obtenidos durante la ejecución de las pruebas automatizadas de la API de Productos y Categorías, incluyendo la detección, corrección, retest y regresión de un defecto controlado.
+Presentar los resultados de la ejecución de las pruebas funcionales y automatizadas realizadas sobre la API de Productos y Categorías.
+
+El informe consolida:
+
+* Casos diseñados.
+* Casos ejecutados.
+* Resultados obtenidos.
+* Defectos identificados.
+* Retest.
+* Regresión.
+* Cobertura de requisitos.
+* Cumplimiento de los criterios de salida.
 
 ---
 
 ## 3. Resumen de ejecución
 
-La suite automatizada está conformada por **23 casos de prueba**.
+La suite automatizada contiene **25 casos de prueba**:
 
-### Ejecución inicial con defecto controlado
+* 7 casos de categorías.
+* 18 casos de productos.
 
-Durante la ejecución controlada se obtuvieron:
+### Resultado final
 
-| Resultado  | Cantidad |
-| ---------- | -------: |
-| Aprobadas  |       21 |
-| Fallidas   |        2 |
-| Bloqueadas |        0 |
-| Total      |       23 |
+| Resultado    | Cantidad |
+| ------------ | -------: |
+| PASSED       |       25 |
+| FAILED       |        0 |
+| BLOCKED      |        0 |
+| NOT EXECUTED |        0 |
+| **TOTAL**    |   **25** |
 
-Porcentaje inicial de aprobación:
+### Porcentaje de aprobación
 
-**21 / 23 × 100 = 91,30 %**
+**25 / 25 = 100 %**
 
-Los casos afectados fueron:
-
-* `test_get_non_existing_category`
-* `test_delete_existing_category`
-
-El primer fallo permitió identificar directamente el defecto controlado DEF-001: la consulta de una categoría inexistente retornaba HTTP 202 en lugar de HTTP 404.
-
-El segundo fallo se produjo como consecuencia del mismo defecto, ya que después de eliminar una categoría, la consulta posterior también debía retornar HTTP 404.
+**Resultado final: 100 % de los casos ejecutados fueron aprobados.**
 
 ---
 
-## 4. Defecto identificado
+## 4. Distribución de casos
 
-### DEF-001
-
-**Descripción:** código HTTP incorrecto al consultar una categoría inexistente.
-
-**Resultado esperado:**
-
-```text
-404 Not Found
-```
-
-**Resultado obtenido durante la ejecución controlada:**
-
-```text
-202 Accepted
-```
-
-**Componente afectado:**
-
-```text
-app/main.py
-```
-
-**Función:**
-
-```text
-get_category_by_id()
-```
-
-El defecto fue introducido temporalmente de forma controlada con fines académicos para demostrar el proceso de gestión de defectos. No corresponde a un defecto descubierto en un ambiente de producción.
+| Módulo     | Diseñados | Ejecutados | PASSED | FAILED |
+| ---------- | --------: | ---------: | -----: | -----: |
+| Categorías |         7 |          7 |      7 |      0 |
+| Productos  |        18 |         18 |     18 |      0 |
+| **Total**  |    **25** |     **25** | **25** |  **0** |
 
 ---
 
-## 5. Corrección
+## 5. Cobertura de requisitos
 
-Se corrigió el código de la función `get_category_by_id()` para retornar nuevamente HTTP 404 cuando la categoría solicitada no existe.
+### Requisitos funcionales
 
-Código corregido:
+Se verificaron todos los requisitos funcionales RF01–RF12.
 
-```python
-if category is None:
-    raise HTTPException(status_code=404, detail="Category not found")
-```
+**Cobertura: 12/12 = 100 %.**
+
+| Requisito | Cobertura |
+| --------- | --------- |
+| RF01      | Cubierto  |
+| RF02      | Cubierto  |
+| RF03      | Cubierto  |
+| RF04      | Cubierto  |
+| RF05      | Cubierto  |
+| RF06      | Cubierto  |
+| RF07      | Cubierto  |
+| RF08      | Cubierto  |
+| RF09      | Cubierto  |
+| RF10      | Cubierto  |
+| RF11      | Cubierto  |
+| RF12      | Cubierto  |
+
+### Reglas de negocio
+
+Se verificaron todas las reglas RN01–RN08.
+
+**Cobertura: 8/8 = 100 %.**
+
+| Regla | Cobertura |
+| ----- | --------- |
+| RN01  | Cubierta  |
+| RN02  | Cubierta  |
+| RN03  | Cubierta  |
+| RN04  | Cubierta  |
+| RN05  | Cubierta  |
+| RN06  | Cubierta  |
+| RN07  | Cubierta  |
+| RN08  | Cubierta  |
 
 ---
 
-## 6. Retest
+## 6. Tipos de pruebas ejecutadas
 
-Después de realizar la corrección se ejecutó nuevamente el caso afectado:
+La suite incluye:
 
-```text
-pytest -v tests/test_categories.py::test_get_non_existing_category
-```
+### Pruebas positivas
+
+Se verificó el funcionamiento esperado utilizando datos válidos.
+
+Entre ellas:
+
+* Creación de categorías.
+* Listado de categorías.
+* Consulta de categorías.
+* Creación de productos.
+* Listado de productos.
+* Consulta de productos.
+* Actualización de productos.
+* Eliminación de productos.
+
+### Pruebas negativas
+
+Se verificó el comportamiento ante datos inválidos y recursos inexistentes.
+
+Se incluyeron:
+
+* Categoría inexistente.
+* Producto inexistente.
+* Nombre inválido.
+* Categoría duplicada.
+* Precio cero.
+* Precio negativo.
+* Stock negativo.
+* Categoría inexistente al crear un producto.
+* Precio inválido al actualizar.
+* Categoría inexistente al actualizar.
+
+### Pruebas de frontera
+
+Se verificaron límites relevantes:
+
+* Nombre de categoría menor a 3 caracteres.
+* Nombre de categoría exactamente de 3 caracteres.
+* Nombre de producto menor a 3 caracteres.
+* Nombre de producto exactamente de 3 caracteres.
+* Precio igual a cero.
+* Precio mínimo positivo.
+* Stock igual a cero.
+
+---
+
+## 7. Defectos
+
+Durante la evaluación se registró un defecto controlado:
+
+**DEF-001 – Código HTTP incorrecto al consultar una categoría inexistente.**
+
+Durante una ejecución controlada, el endpoint devolvió HTTP 202 cuando el contrato establecía HTTP 404.
+
+El defecto fue corregido y posteriormente sometido a retest.
+
+### Estado final
+
+| Severidad | Abiertos | Cerrados |
+| --------- | -------: | -------: |
+| Crítica   |        0 |        0 |
+| Alta      |        0 |        1 |
+| Media     |        0 |        0 |
+| Baja      |        0 |        0 |
+
+**Defectos críticos abiertos: 0.**
+
+**Defectos abiertos: 0.**
+
+---
+
+## 8. Retest
+
+Después de corregir DEF-001 se volvió a ejecutar el caso:
+
+`CP-CAT-04 – Consultar categoría inexistente`
+
+Resultado:
+
+**PASSED**
+
+El endpoint volvió a responder HTTP 404, conforme al contrato.
+
+---
+
+## 9. Regresión
+
+Después del retest se ejecutó nuevamente la suite completa de pruebas automatizadas.
 
 Resultado:
 
 ```text
-1 passed, 1 warning
+25 passed
+0 failed
+0 blocked
 ```
 
-El caso de prueba quedó aprobado después de la corrección.
+Porcentaje de aprobación:
+
+**100 %.**
+
+La regresión no presentó nuevos fallos funcionales.
 
 ---
 
-## 7. Regresión
+## 10. Warning técnico
 
-Después del retest se ejecutó nuevamente la suite completa:
+Durante la ejecución se presentó un warning de deprecación relacionado con:
+
+`anyio.abc.BlockingPortal`
+
+El warning proviene de la interacción entre las versiones utilizadas de Starlette/AnyIO y no produjo fallos en los casos de prueba.
+
+Resultado:
+
+* No afecta el resultado funcional de la suite.
+* No generó casos FAILED.
+* Se mantiene registrado como observación técnica para futuras actualizaciones de dependencias.
+
+---
+
+## 11. Criterios de salida
+
+| Criterio                        | Resultado        |
+| ------------------------------- | ---------------- |
+| Cobertura RF01–RF12             | Cumplido – 100 % |
+| Cobertura RN01–RN08             | Cumplido – 100 % |
+| Mínimo 15 casos automatizados   | Cumplido – 25    |
+| Ejecución de casos críticos     | Cumplido         |
+| Aprobación mínima del 90 %      | Cumplido – 100 % |
+| Cero defectos críticos abiertos | Cumplido         |
+| Defectos trazados               | Cumplido         |
+| Retest realizado                | Cumplido         |
+| Regresión realizada             | Cumplido         |
+
+---
+
+## 12. Conclusión técnica
+
+La ejecución final de la suite automatizada obtuvo **25 casos aprobados de 25 ejecutados**, equivalente a un **100 % de aprobación**.
+
+La cobertura documental alcanza el 100 % de los requisitos funcionales RF01–RF12 y de las reglas de negocio RN01–RN08.
+
+Las pruebas incluyen escenarios positivos, negativos y de frontera, además de validaciones de recursos inexistentes, actualización, eliminación y asociación de productos con categorías.
+
+El defecto controlado DEF-001 fue identificado, corregido y validado mediante retest. Posteriormente, la ejecución de regresión completa confirmó que los cambios no introdujeron nuevos fallos funcionales.
+
+No existen defectos críticos ni defectos abiertos al finalizar la ejecución.
+
+---
+
+## 13. Riesgos pendientes
+
+Aunque los criterios de salida fueron cumplidos, permanecen como riesgos fuera del alcance de esta evaluación:
+
+* Ausencia de pruebas de carga y rendimiento.
+* Ausencia de pruebas de seguridad avanzada.
+* Ausencia de una base de datos persistente.
+* Warning de deprecación relacionado con Starlette/AnyIO.
+* No se realizaron pruebas de despliegue en producción.
+
+Estos puntos pueden ser considerados en futuras iteraciones del proyecto.
+
+---
+
+## 14. Evidencia final
+
+La evidencia principal de la ejecución final corresponde a la ejecución de pytest desde la raíz del proyecto.
+
+Resultado:
 
 ```text
-pytest -v
+25 passed, 1 warning
 ```
 
-Resultado final:
-
-```text
-23 passed, 1 warning
-```
-
-### Resultado final
-
-| Resultado  | Cantidad |
-| ---------- | -------: |
-| Aprobadas  |       23 |
-| Fallidas   |        0 |
-| Bloqueadas |        0 |
-| Total      |       23 |
-
-### Porcentaje de aprobación
-
-**23 / 23 × 100 = 100 %**
-
-La corrección aplicada no generó regresiones en las demás funcionalidades probadas.
-
----
-
-## 8. Cobertura de pruebas
-
-Las pruebas automatizadas cubren funcionalidades relacionadas con:
-
-### Productos
-
-* Consulta de productos.
-* Consulta de producto por ID.
-* Creación de productos.
-* Actualización parcial.
-* Eliminación.
-* Consulta de productos inexistentes.
-* Validaciones de datos.
-* Filtros.
-* Health check.
-
-### Categorías
-
-* Consulta de categorías.
-* Consulta de categoría por ID.
-* Consulta de categoría inexistente.
-* Creación.
-* Validación de datos.
-* Actualización parcial.
-* Eliminación.
-* Filtro por estado activo.
-* Búsqueda por nombre.
-
----
-
-## 9. Criterios de salida
-
-Los principales criterios de salida definidos para la ejecución fueron:
-
-| Criterio                           | Resultado       |
-| ---------------------------------- | --------------- |
-| Ejecución de pruebas automatizadas | Cumplido        |
-| Casos críticos aprobados           | Cumplido        |
-| Defecto identificado y documentado | Cumplido        |
-| Corrección aplicada                | Cumplido        |
-| Retest ejecutado                   | Cumplido        |
-| Regresión ejecutada                | Cumplido        |
-| Pruebas finales sin fallos         | Cumplido        |
-| Tasa final de aprobación ≥ 95 %    | Cumplido: 100 % |
-
----
-
-## 10. Advertencias del entorno
-
-En las ejecuciones se presentó un `DeprecationWarning` relacionado con:
-
-```text
-anyio.abc.BlockingPortal
-```
-
-El warning se genera desde una dependencia utilizada por `starlette.testclient`.
-
-No produjo fallos en las pruebas y no afecta el resultado funcional de la API.
-
----
-
-## 11. Conclusión técnica
-
-La ejecución final de la suite automatizada obtuvo **23 casos aprobados de 23 ejecutados**, equivalente a una tasa de aprobación del **100 %**.
-
-El defecto controlado DEF-001 fue reproducido, documentado, corregido y sometido a retest. Posteriormente se ejecutó la regresión completa y no se presentaron nuevos fallos.
-
-Por lo tanto, con respecto al alcance de las pruebas realizadas, los criterios de salida definidos fueron cumplidos.
+Este resultado constituye la evidencia de la ejecución final de los 25 casos automatizados.
