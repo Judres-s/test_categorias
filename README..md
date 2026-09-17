@@ -1,96 +1,166 @@
-# INSTRUCCIONES PARA LA EJECUCION DEL PROYECTO
-# Estructura
-```
+# INSTRUCCIONES PARA LA EJECUCIÓN DEL PROYECTO
+
+## Estructura del proyecto
+
+```text
 C:.
 │   .gitignore
-│   README..md
+│   README.md
 │   requirements.txt
-│   
+│
 ├───app
 │       database.py
 │       main.py
 │       schemas.py
 │       __init__.py
-│       
+│
 ├───docs
 │       Actividad_Autonoma_API_Categorias_FastAPI.pdf
 │       CASOS_DE_PRUEBA.TXT
-│       
+│
 ├───Liteclient
 │       fast_api_productos_categorias.postman_collection.json
-│       
+│
 └───tests
         conftest.py
         test_categories.py
         test_products.py
         __init__.py
 ```
-### 1.CREAR EL ENTORNO VIRTUAL
-```
+
+## 1. Crear el entorno virtual
+
+Para aislar las dependencias del proyecto, primero se debe crear un entorno virtual:
+
+```bash
 python -m venv .venv
 ```
-### 2.ACTIVAR EL ENTORNO
-```
+
+## 2. Activar el entorno virtual
+
+En Windows PowerShell, active el entorno mediante el siguiente comando:
+
+```powershell
 .\.venv\Scripts\Activate.ps1
 ```
-### 3.INSTALAR LAS DEPENDENCIAS
-```
+
+## 3. Instalar las dependencias
+
+Las librerías necesarias pueden instalarse directamente mediante:
+
+```bash
 pip install fastapi "uvicorn[standard]" pytest httpx
 ```
-O
-```
+
+También es posible instalarlas utilizando el archivo `requirements.txt`:
+
+```bash
 python -m pip install -r requirements.txt
 ```
-### EJECUTAR EL SERVIDOR (UVICORN)
 
+## 4. Ejecutar el servidor
+
+Una vez instaladas las dependencias, inicie la aplicación utilizando Uvicorn:
+
+```bash
+uvicorn app.main:app --reload
 ```
-uvicorn app.main:app --reload   
+
+El servidor estará disponible de forma local en el puerto 8000.
+
+# Endpoints de Categorías
+
+| Método | Endpoint           | Descripción                                                                             | Códigos       |
+| ------ | ------------------ | --------------------------------------------------------------------------------------- | ------------- |
+| GET    | `/categories`      | Obtiene todas las categorías y permite aplicar filtros mediante `?active=` y `?search=` | 200           |
+| GET    | `/categories/{id}` | Busca una categoría específica mediante su identificador                                | 200, 404      |
+| POST   | `/categories`      | Registra una nueva categoría                                                            | 201, 422      |
+| PATCH  | `/categories/{id}` | Modifica parcialmente una categoría existente                                           | 200, 404, 422 |
+| DELETE | `/categories/{id}` | Elimina una categoría mediante su identificador                                         | 204, 404      |
+
+# Pruebas con LiteClient
+
+## Guía rápida para probar la API
+
+La API puede probarse mediante herramientas como Postman, Insomnia u otros clientes HTTP. A continuación se indican las características principales de cada método.
+
+## Configuración según el método HTTP
+
+| Método | Función                         | ¿Utiliza body?                        | Headers                          | ¿Requiere ID en la URL? |
+| ------ | ------------------------------- | ------------------------------------- | -------------------------------- | ----------------------- |
+| GET    | Consultar o buscar información  | No                                    | No                               | Opcional                |
+| POST   | Crear un nuevo registro         | Sí                                    | `Content-Type: application/json` | No                      |
+| PATCH  | Modificar información existente | Sí, únicamente los campos a modificar | `Content-Type: application/json` | Sí                      |
+| DELETE | Eliminar un registro            | No                                    | No                               | Sí                      |
+
+## Uso del body
+
+* **POST:** Se deben enviar todos los campos requeridos por el esquema. Si falta alguno o tiene un formato incorrecto, la API responderá con un código `422`.
+
+* **PATCH:** Solo es necesario enviar los atributos que se desean modificar. Por ejemplo, para cambiar únicamente el precio, se puede enviar:
+
+```json
+{
+    "price": 10.99
+}
 ```
-## Endpoints de Categorías
 
-| Método | Endpoint | Descripción | Códigos |
-|--------|----------|-------------|---------|
-| GET | /categories | Lista todas las categorías (filtros: ?active=, ?search=) | 200 |
-| GET | /categories/{id} | Consulta una categoría por ID | 200, 404 |
-| POST | /categories | Crea una categoría nueva | 201, 422 |
-| PATCH | /categories/{id} | Actualiza parcialmente una categoría | 200, 404, 422 |
-| DELETE | /categories/{id} | Elimina una categoría | 204, 404 |
-# PRUEBAS LITECLIENT
-# Guía rápida para probar la API (sin renegar)
+* **GET y DELETE:** No requieren un body. La información necesaria se proporciona mediante la URL, los parámetros de consulta o el identificador correspondiente.
 
-Si vas a usar Insomnia, Postman o cualquier cliente, acá va una ayuda memoria de cómo configurar cada método. No es la biblia, pero te va a salvar.
+## Consideraciones importantes
 
-## Lo básico según el método
+### Headers
 
-| Método | ¿Pa' qué? | ¿Lleva body? | ¿Headers? | ¿ID en la URL? |
-|--------|-----------|--------------|-----------|----------------|
-| GET | Ver o buscar | No | No | Opcional (si buscas uno solo) |
-| POST | Crear | Sí, todo | Sí, `Content-Type: application/json` | No |
-| PATCH | Editar algo | Sí, solo lo que cambias | Sí, `Content-Type: application/json` | Sí |
-| DELETE | Borrar | No | No | Sí |
+Para las solicitudes `POST` y `PATCH`, se debe establecer el siguiente encabezado:
 
-## ¿Y el body?
-
-- **POST:** Mandás todo. Si te falta un campo, la API te va a tirar un 422. No hay vueltas.
-- **PATCH:** Mandás solo lo que querés cambiar. No hace falta que repitas todo el objeto. Por ejemplo, si solo querés cambiar el precio, mandás `{"price": 10.99}` y listo.
-- **GET y DELETE:** No llevan body. Todo va en la URL. Si igual le metés algo en el body, el servidor lo ignora. Perdés el tiempo.
-
-## Ojo con estos detalles
-
-- **El header no se te olvide:** Cada vez que uses POST o PATCH, poné `Content-Type: application/json` en la pestaña de Headers. Si no, la API no entiende el JSON y te da error.
-- **Las URLs sin barra al final:** Usá `.../products` y no `.../products/`. FastAPI se pone delicado con eso y a veces te redirige y pierde el body. Un clásico.
-- **Errores que vas a ver seguido:**
-  - `404`: El ID que pusiste no existe.
-  - `422`: Mandaste mal el JSON. Revisá nombres de campos y tipos de datos.
-  - `405`: Usaste el método equivocado (ej. intentaste crear con GET).
-
-Con eso ya podés probar todo. Cualquier cosa, mirá el `/docs` que FastAPI te genera solo y te muestra los ejemplos.
-### DOCS/SWAGGER Y REDOC
+```text
+Content-Type: application/json
 ```
-http://127.0.0.1:8000/docs#/
+
+Esto permite que el servidor interprete correctamente la información enviada en formato JSON.
+
+### URLs
+
+Se recomienda utilizar las rutas sin una barra `/` al final. Por ejemplo:
+
+```text
+/products
 ```
+
+en lugar de:
+
+```text
+/products/
 ```
-http://127.0.0.1:8000/redoc#/
+
+Esto evita posibles redirecciones innecesarias durante las solicitudes.
+
+### Códigos de error frecuentes
+
+* **404:** El recurso o identificador solicitado no existe.
+* **422:** Los datos enviados no cumplen con el formato o los campos definidos por la API.
+* **405:** El método HTTP utilizado no está permitido para esa ruta.
+
+# Documentación de la API
+
+FastAPI genera automáticamente documentación interactiva para consultar y probar los diferentes endpoints.
+
+### Swagger UI
+
+```text
+http://127.0.0.1:8000/docs
 ```
-### PRODUCTOS
-### CATEGORIAS
+
+### ReDoc
+
+```text
+http://127.0.0.1:8000/redoc
+```
+
+# Productos
+
+En esta sección se encuentran los endpoints y funcionalidades relacionados con la gestión de productos.
+
+# Categorías
+
+En esta sección se encuentran los endpoints y funcionalidades correspondientes a la administración de categorías.
