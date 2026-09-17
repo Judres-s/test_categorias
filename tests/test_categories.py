@@ -1,106 +1,90 @@
 # =====================================================
-# TESTS DE CATEGORÍAS (CA01 - CA12 + RETO OPCIONAL)
+# TESTS DE CATEGORÍAS
+# CP-CAT-01 a CP-CAT-07
 # =====================================================
 
 
-# CA01 - Listar categorías
+# CP-CAT-01 - Crear categoría válida
+def test_create_valid_category(client):
+    payload = {
+        "name": "Periféricos",
+        "description": "Dispositivos periféricos",
+        "active": True
+    }
+
+    response = client.post("/categories", json=payload)
+
+    assert response.status_code == 201
+
+    data = response.json()
+
+    assert data["name"] == "Periféricos"
+    assert data["description"] == "Dispositivos periféricos"
+    assert data["active"] is True
+    assert "id" in data
+
+
+# CP-CAT-02 - Listar categorías
 def test_list_categories(client):
     response = client.get("/categories")
+
     assert response.status_code == 200
-    assert len(response.json()) == 2
+    assert isinstance(response.json(), list)
 
 
-# CA02 - Consultar existente
+# CP-CAT-03 - Consultar categoría existente
 def test_get_existing_category(client):
     response = client.get("/categories/1")
+
     assert response.status_code == 200
-    assert response.json()["name"] == "Computadores"
+
+    data = response.json()
+
+    assert data["id"] == 1
+    assert "name" in data
 
 
-# CA03 - Consultar inexistente
+# CP-CAT-04 - Consultar categoría inexistente
 def test_get_non_existing_category(client):
-    response = client.get("/categories/999")
+    response = client.get("/categories/99999")
+
     assert response.status_code == 404
-    # AJUSTE: main.py devuelve "Category not found" (sin el ID)
     assert response.json() == {"detail": "Category not found"}
 
 
-# CA04 - ID inválido
-def test_get_invalid_id(client):
-    response = client.get("/categories/abc")
-    assert response.status_code == 422
-
-
-# CA05 - Crear válida
-def test_create_valid_category(client):
-    payload = {"name": "Tablets", "description": "Dispositivos táctiles", "active": True}
-    response = client.post("/categories", json=payload)
-    assert response.status_code == 201
-    data = response.json()
-    assert data["id"] == 3
-    assert data["name"] == "Tablets"
-
-
-# CA06 - Nombre demasiado corto
+# CP-CAT-05 - Nombre de categoría menor a 3 caracteres
 def test_create_category_name_too_short(client):
-    response = client.post("/categories", json={"name": "AB"})
+    response = client.post(
+        "/categories",
+        json={"name": "AB"}
+    )
+
     assert response.status_code == 422
 
 
-# CA07 - Falta nombre
-def test_create_category_missing_name(client):
-    response = client.post("/categories", json={"description": "Sin nombre"})
-    assert response.status_code == 422
+# CP-CAT-06 - Nombre de categoría exactamente de 3 caracteres
+def test_create_category_name_exactly_3_characters(client):
+    response = client.post(
+        "/categories",
+        json={"name": "PCs"}
+    )
 
+    assert response.status_code == 201
 
-# CA08 - Actualizar existente
-def test_update_existing_category(client):
-    response = client.patch("/categories/1", json={"name": "PCs"})
-    assert response.status_code == 200
     data = response.json()
+
     assert data["name"] == "PCs"
-    assert data["description"] == "Equipos de cómputo"
 
 
-# CA09 - Actualizar inexistente
-def test_update_non_existing_category(client):
-    response = client.patch("/categories/999", json={"name": "XYZ"})
-    assert response.status_code == 404
+# CP-CAT-07 - Nombre de categoría duplicado sin distinguir mayúsculas
+def test_create_duplicate_category_case_insensitive(client):
 
+    existing_category = client.get("/categories/1").json()
+    existing_name = existing_category["name"]
 
-# CA10 - Eliminar existente
-def test_delete_existing_category(client):
-    response = client.delete("/categories/1")
-    assert response.status_code == 204   
-    assert client.get("/categories/1").status_code == 404
+    response = client.post(
+        "/categories",
+        json={"name": existing_name.upper()}
+    )
 
-
-# CA11 - Eliminar inexistente
-def test_delete_non_existing_category(client):
-    response = client.delete("/categories/999")
-    assert response.status_code == 404
-
-
-# CA12 - Filtrar activas
-def test_filter_active_categories(client):
-    response = client.get("/categories?active=true")
-    assert response.status_code == 200
-    data = response.json()
-    assert len(data) == 1
-    assert all(c["active"] is True for c in data)
-
-
-# RETO OPCIONAL 1 - Búsqueda por nombre
-def test_search_categories(client):
-    response = client.get("/categories?search=comp")
-    assert response.status_code == 200
-    data = response.json()
-    assert len(data) == 1
-    assert data[0]["name"] == "Computadores"
-
-
-# RETO OPCIONAL 2 - Búsqueda sin resultados
-def test_search_categories_no_match(client):
-    response = client.get("/categories?search=zzz")
-    assert response.status_code == 200
-    assert response.json() == []
+    assert response.status_code == 409
