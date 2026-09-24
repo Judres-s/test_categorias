@@ -1,4 +1,4 @@
-Julian Quiroga
+Julian Quiroga, Yoberson Diaz, Daniela Jaraba, Kamila Pinzon, Zuleima Terraza
 
 
 El proyecto trabaja con dos recursos principales:
@@ -37,7 +37,7 @@ Para iniciar la API se utiliza **Uvicorn**, que funciona como servidor ASGI para
 El comando utilizado es:
 
 ```bash
-python -m uvicorn app.main:app --reload
+  python -m uvicorn app.main:app --reload
 ```
 
 La opción `--reload` permite que el servidor se reinicie automáticamente cuando se realizan cambios en el código durante el desarrollo.
@@ -63,7 +63,7 @@ python -m pytest -v
 Para ejecutar específicamente las pruebas relacionadas con las categorías:
 
 ```bash
-python -m pytest test/test_categories.py -v
+python -m pytest tests/test_categories.py -v
 ```
 
 También es posible utilizar:
@@ -133,7 +133,7 @@ La API dispone de los siguientes endpoints para administrar las categorías:
 | GET    | `/categories`               | Obtener todas las categorías              | 200            |
 | GET    | `/categories/{category_id}` | Consultar una categoría específica        | 200            |
 | POST   | `/categories`               | Crear una nueva categoría                 | 201            |
-| PATCH  | `/categories/{category_id}` | Modificar parcialmente una categoría      | 200            |
+| Put    | `/categories/{category_id}` | Modificar parcialmente una categoría      | 200            |
 | DELETE | `/categories/{category_id}` | Eliminar una categoría                    | 204            |
 | GET    | `/categories?active=true`   | Obtener únicamente las categorías activas | 200            |
 | GET    | `/categories?search=comp`   | Buscar categorías por nombre              | 200            |
@@ -185,7 +185,7 @@ En total se implementaron las **12 pruebas definidas en la matriz de la activida
 | Extra | Buscar por nombre con coincidencias  | 200                                           |
 | Extra | Buscar por nombre sin coincidencias  | 200 y lista vacía                             |
 
-Para evitar que los resultados de una prueba afecten a las siguientes, se utiliza un **fixture `autouse=True` denominado `reset_categories_db`**.
+Para evitar que los resultados de una prueba afecten a las siguientes, se utiliza un **fixture `autouse=True` denominado `reset_db`**.
 
 Este fixture se encarga de restablecer los datos de `categories_db` antes de ejecutar cada prueba. De esta manera, cada prueba comienza con un estado independiente y los resultados son más confiables.
 
@@ -202,12 +202,12 @@ pytest test/test_categories.py -v
 se obtuvo el siguiente resultado:
 
 ```text
-14 passed, 10 warnings in 0.84s
+25 passed 1 warning in 0.42s
 ```
 
-Esto significa que las **14 pruebas fueron ejecutadas correctamente y todas fueron aprobadas**.
+Esto significa que las **25  pruebas fueron ejecutadas correctamente y todas fueron aprobadas**.
 
-Las 14 pruebas corresponden a las 12 pruebas obligatorias de la actividad más las 2 pruebas adicionales implementadas para comprobar la funcionalidad de búsqueda por nombre.
+Las 25 pruebas corresponden a las  pruebas obligatorias de la actividad.
 
 ---
 

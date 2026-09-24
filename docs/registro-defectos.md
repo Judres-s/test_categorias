@@ -54,7 +54,7 @@ con el detalle:
 HTTP 202
 ```
 
-El resultado no cumplía el contrato.
+El resultado no cumplía el requísito.
 
 ### Evidencia
 

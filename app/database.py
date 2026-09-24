@@ -1,28 +1,28 @@
 products_db: list[dict] = [
     {
         "id": 1,
-        "name": "Product 1",
+        "name": "Computadora portatil",
         "price": 10.99,
         "stock": 100,
         "category_id": 1
     },
     {
         "id": 2,
-        "name": "Product 2",
+        "name": "Smartphones",
         "price": 15.99,
         "stock": 50,
         "category_id": 2
     },
     {
         "id": 3,
-        "name": "Product 3",
+        "name": "Tablets",
         "price": 20.99,
         "stock": 0,
         "category_id": 1
     },
     {
         "id": 4,
-        "name": "Product 4",
+        "name": "Headphones",
         "price": 25.99,
         "stock": 30,
         "category_id": 2

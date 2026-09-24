@@ -11,35 +11,35 @@ from app.main import app
 INITIAL_PRODUCTS = [
     {
         "id": 1,
-        "name": "Product 1",
+        "name": "Laptop",
         "price": 10.99,
         "stock": 100,
         "category_id": 1
     },
     {
         "id": 2,
-        "name": "Product 2",
+        "name": "Smartphone",
         "price": 15.99,
         "stock": 50,
         "category_id": 2
     },
     {
         "id": 3,
-        "name": "Product 3",
+        "name": "Laptop",
         "price": 20.99,
         "stock": 0,
         "category_id": 1
     },
     {
         "id": 4,
-        "name": "Product 4",
+        "name": "Smartphone",
         "price": 25.99,
         "stock": 30,
         "category_id": 2
     },
     {
         "id": 5,
-        "name": "Product 5",
+        "name": "Laptop",
         "price": 30.99,
         "stock": 20,
         "category_id": 1
@@ -105,7 +105,7 @@ INITIAL_CATEGORIES = [
 ]
 
 
-@pytest.fixture(autouse=True)
+@pytest.fixture(autouse=True) #Fixture prepara los datos de las pruebas antes de enviarlas.
 def reset_db(monkeypatch):
     """Restaura ambas bases antes de cada test para evitar contaminación."""
 
